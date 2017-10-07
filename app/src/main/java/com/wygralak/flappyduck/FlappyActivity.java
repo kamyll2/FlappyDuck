@@ -7,9 +7,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.wygralak.flappyduck.Engine.FlappyDuckSurfaceView2;
-import com.wygralak.flappyduck.Engine.ICymbergajRefree;
+import com.wygralak.flappyduck.Engine.IGameStateHolder;
 
-public class FlappyActivity extends ActionBarActivity implements IMessageViewer, ICymbergajRefree {
+public class FlappyActivity extends ActionBarActivity implements IMessageViewer, IGameStateHolder {
 
     RelativeLayout overlayView;
     TextView messageTextView;
@@ -119,7 +119,7 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
     }
 
     @Override
-    public void notifyPlayer1Scored() {
+    public void notifyPlayerFailed() {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -128,43 +128,6 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
                 showMessage("GAME OVER!");
             }
         });
-    }
-
-    @Override
-    public void notifyPlayer2Scored() {
-        /*player2Goals++;
-        if (player2Goals >= 7) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    updateTitleBar();
-                    gameThread.setState(CymbergajSurfaceView2.CymbergajThread.STATE_READY);
-                    showMessage("Player 2 won the match!\nTap screen to play again\nClick back to quit");
-                }
-            });
-        } else {
-            if (!countdownRunning) {
-                countdownRunning = true;
-                new Thread(new CountdownRunnable(new CountdownRunnable.ICountdownNotifier() {
-                    @Override
-                    public void notifyCountdown(final int step) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (step != 0) {
-                                    showCountdown("Player 2 scored a goal!", "" + step);
-                                    updateTitleBar();
-                                } else {
-                                    hideMessageBox();
-                                    gameThread.doStart();
-                                    countdownRunning = false;
-                                }
-                            }
-                        });
-                    }
-                })).start();
-            }
-        }*/
     }
 
     @Override
@@ -190,139 +153,4 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
             super.onBackPressed();
         }
     }
-
-    /*
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        generatePitchWalls();
-        textView = (TextView) findViewById(R.id.statusText);
-        ballEngine = new BallEngine(this);
-        player1Engine = new PlayerEngine(this);
-        player2Engine = new PlayerEngine(this);
-        surfaceView = (FingerTrackingView) findViewById(R.id.surfaceView);
-        surfaceView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                ballEngine.addColissionable(surfaceView);
-                ballEngine.addColissionable(player1Engine);
-                ballEngine.addColissionable(player2Engine);
-                ballEngine.addColissionables(pitchWalls);
-            }
-        }, 200);
-        surfaceView.post(new Runnable() {
-            @Override
-            public void run() {
-                startGameWithDelay();
-            }
-        });
-        surfaceView.setRefree(this);
-        surfaceView.setBallEngine(ballEngine);
-        surfaceView.setPlayer1Engine(player1Engine);
-        surfaceView.setPlayer2Engine(player2Engine);
-        surfaceView.setPitchWalls(pitchWalls);
-    }
-
-    private void startRefreshingThread() {
-        refreshingThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(15);
-                        ballEngine.updatePosition();
-                        ballEngine.considerFriction();
-                        ballEngine.checkForCollisions();
-                        surfaceView.postInvalidate();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        break;
-                    }
-                }
-            }
-        });
-        refreshingThread.start();
-    }
-
-    @Override
-    protected void onDestroy() {
-        refreshingThread.interrupt();
-        super.onDestroy();
-    }
-
-    public void setStatusText(final String text) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                textView.setText(text);
-            }
-        });
-    }
-
-    private void generatePitchWalls() {
-        pitchWalls = new ArrayList<>();
-        pitchWalls.add(new NorthLeftPitchWall());
-        pitchWalls.add(new NorthRightPitchWall());
-        pitchWalls.add(new SouthLeftPitchWall());
-        pitchWalls.add(new SouthRightPitchWall());
-        pitchWalls.add(new WestUpPitchWall());
-        pitchWalls.add(new WestDownPitchWall());
-        pitchWalls.add(new EastUpPitchWall());
-        pitchWalls.add(new EastDownPitchWall());
-    }
-
-    @Override
-    public void notifyPlayer1Scored() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                refreshingThread.interrupt();
-                getSupportActionBar().setTitle("GOOL PLAYER 1");
-                surfaceView.setDefaultPositions();
-                ballEngine.setDefaultSpeed();
-                startGameWithDelay();
-            }
-        });
-    }
-
-    @Override
-    public void notifyPlayer2Scored() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                refreshingThread.interrupt();
-                getSupportActionBar().setTitle("GOOL PLAYER 2");
-                surfaceView.setDefaultPositions();
-                ballEngine.setDefaultSpeed();
-                startGameWithDelay();
-            }
-        });
-    }
-
-    private void startGameWithDelay() {
-        if (dialog == null) {
-            dialog = new Dialog(this);
-            dialog.setCancelable(false);
-        }
-        dialog.setTitle("3");
-        dialog.show();
-        new Thread(new CountdownRunnable(this)).start();
-
-    }
-
-    @Override
-    public void notifyCountdown(final int i) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (i != 0) {
-                    dialog.setTitle(String.valueOf(i));
-                } else {
-                    dialog.hide();
-                    startRefreshingThread();
-                }
-            }
-        });
-    }*/
 }

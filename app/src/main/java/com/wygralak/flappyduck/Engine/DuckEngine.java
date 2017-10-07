@@ -1,8 +1,5 @@
 package com.wygralak.flappyduck.Engine;
 
-import android.graphics.Color;
-import android.graphics.Paint;
-
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInterpreter;
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInvoker;
 import com.wygralak.flappyduck.Vector2;
@@ -15,9 +12,8 @@ import java.util.List;
  */
 public class DuckEngine implements ICollisionInvoker {
     public static final float DUCK_RADIUS = 20f;
-    public static final float SELF_SLOWING_RATIO = 1.0f;
-    public static final Paint BALL_PAINT = new Paint();
-    public static final float defaultSpeed = 6f;
+    public static final float DEFAULT_SPEED = 6f;
+    private static final float GRAVITY_STRANGTH = 0.05f;
 
     protected List<ICollisionInterpreter> collisionables;
 
@@ -25,13 +21,11 @@ public class DuckEngine implements ICollisionInvoker {
     protected float currentY;
     private float pitchWidth;
     private float pitchHeight;
-    protected float speed = defaultSpeed;
+    protected float speed = DEFAULT_SPEED;
 
     private Vector2 currentVector;
 
-
     public DuckEngine() {
-        BALL_PAINT.setColor(Color.WHITE);
         collisionables = new ArrayList<>();
         currentVector = new Vector2(0.0f, 0.1f).normalize();
     }
@@ -64,7 +58,7 @@ public class DuckEngine implements ICollisionInvoker {
     }
 
     public void setDefaultSpeed() {
-        speed = defaultSpeed;
+        speed = DEFAULT_SPEED;
     }
 
     @Override
@@ -72,12 +66,8 @@ public class DuckEngine implements ICollisionInvoker {
         float speedWithRatio = speed * (float) ratio;
         currentX = currentX + speedWithRatio * currentVector.x;
         currentY = currentY + speedWithRatio * currentVector.y;
-        currentVector.y += 0.05;
+        currentVector.y += (ratio * GRAVITY_STRANGTH); //falling down
         currentVector.normalize();
-    }
-
-    public void considerFriction() {
-        speed *= SELF_SLOWING_RATIO;
     }
 
     @Override
@@ -102,7 +92,7 @@ public class DuckEngine implements ICollisionInvoker {
 
     public boolean checkForCollisions() {
         for (int i = 0; i < collisionables.size(); i++) {
-            if (collisionables.get(i).checkForCollisionAndHandle(this, currentVector, currentX, currentY)) {
+            if (collisionables.get(i).checkForCollision(this, currentVector, currentX, currentY)) {
                 return true;
             }
         }

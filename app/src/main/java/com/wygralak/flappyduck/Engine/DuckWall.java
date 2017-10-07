@@ -11,10 +11,10 @@ import com.wygralak.flappyduck.Vector2;
  */
 public class DuckWall extends BasePitchWall {
 
-    public static final float defaultSpeed = 6f;
+    public static final float DEFAULT_SPEED = 6f;
     protected float currentX;
     protected float currentY;
-    protected float speed = defaultSpeed;
+    protected float speed = DEFAULT_SPEED;
 
     private Vector2 currentVector;
     private int pithWidth;
@@ -33,30 +33,28 @@ public class DuckWall extends BasePitchWall {
                 BASE_WALL_THICKNESS,
                 (float) pitchWidth,
                 ((float) pitchHeight / 2f) - defaultGoalSize / 2f);
-        currentX = left;
-        currentY = top;
     }
 
     public void updatePosition(double ratio) {
         float speedWithRatio = speed * (float) ratio;
-        currentX = currentX + speedWithRatio * currentVector.x;
-        currentY = currentY + speedWithRatio * currentVector.y;
-        super.set(currentX, currentY, currentX + width(), currentY + height());
-        if (left < 0) {
-            currentX = pithWidth;
-            super.set(currentX, currentY, currentX + width(), currentY + height());
+        float nextX = left + speedWithRatio * currentVector.x;
+        float nextY = top + speedWithRatio * currentVector.y;
+        if (nextX < 0) {
+            nextX = pithWidth;
         }
+        super.set(nextX, nextY, nextX + width(), nextY + height());
     }
 
     @Override
-    public boolean checkForCollisionAndHandle(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
-        if (isCollision(x, y)) {
+    public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
+/*        if (isCollision(x, y)) {
             invoker.updateVector(new Vector2(-Math.abs(currentVector.x), currentVector.y));
             //validateBallOutsideWall(invoker);
             invoker.updateSpeedWithRatio(DEFAULT_SPEED_ABSORB);
             return true;
         }
-        return false;
+        return false;*/
+        return isCollision(x, y);
     }
 
     @Override

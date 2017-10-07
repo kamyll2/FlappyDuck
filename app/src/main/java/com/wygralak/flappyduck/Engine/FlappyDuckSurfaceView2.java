@@ -31,8 +31,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         public static final int STATE_PAUSE = 2;
         public static final int STATE_READY = 3;
         public static final int STATE_RUNNING = 4;
-        public static final int STATE_P1_SCORED = 5;
-        public static final int STATE_P2_SCORED = 6;
+        public static final int STATE_PLAYER_FAILED = 5;
 
         /*
          * Member (state) fields
@@ -80,13 +79,10 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         //private List<DuckWall> duckWalls;
         private DuckWall duckWall;
         private DuckEngine duckEngine;
-        //private PlayerEngine player2Engine;
-        //private PlayerEngine player1Engine;
 
         /**
-         * Cymbergaj self objects
+         * FlappyDuck self objects
          */
-        //private float center_line;
         public FlappyDuckThread(SurfaceHolder surfaceHolder, Context context) {
             // get handles to some important objects
             mSurfaceHolder = surfaceHolder;
@@ -97,12 +93,11 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
 
             duckEngine.addColissionable(this);
             duckEngine.addColissionable(duckWall);
-            //ballEngine.addColissionable(player2Engine);
-            //ballEngine.addColissionables(pitchWalls);
+            //ballEngine.addColissionables(duckWalls);todo
         }
 
         private void generateDuckWalls() {
-            /*pitchWalls = new ArrayList<>();
+            /*pitchWalls = new ArrayList<>();todo
             pitchWalls.add(new NorthLeftPitchWall());
             pitchWalls.add(new NorthRightPitchWall());
             pitchWalls.add(new SouthLeftPitchWall());
@@ -127,24 +122,9 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         }
 
         @Override
-        public boolean checkForCollisionAndHandle(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
-            /*if (x - BallEngine.BALL_RADIUS > mCanvasWidth) {
-                setState(STATE_P2_SCORED);
-                setDefaultPositions();
-                ballEngine.setDefaultSpeed();
-                mRefree.notifyPlayer2Scored();g
-            } else if (x + BallEngine.BALL_RADIUS < 0) {
-                setState(STATE_P1_SCORED);
-                setDefaultPositions();
-                ballEngine.setDefaultSpeed();
-                mRefree.notifyPlayer1Scored();
-            }*/
-            if (y + DuckEngine.DUCK_RADIUS > mCanvasHeight) {
-                return true;
-            } else if (y - DuckEngine.DUCK_RADIUS < 0) {
-                return true;
-            }
-            return false;
+        public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
+            return y + DuckEngine.DUCK_RADIUS > mCanvasHeight ||
+                    y - DuckEngine.DUCK_RADIUS < 0;
         }
 
         /**
@@ -185,10 +165,10 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         }
 
         private void gameOver() {
-            setState(STATE_P1_SCORED);
+            setState(STATE_PLAYER_FAILED);
             setDefaultPositions();
             duckEngine.setDefaultSpeed();
-            mRefree.notifyPlayer1Scored();
+            mGameState.notifyPlayerFailed();
         }
 
         @Override
@@ -280,7 +260,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
                 mMode = mode;
 
                 if (mMode == STATE_PAUSE) {
-                    mRefree.notifyGamePaused();
+                    mGameState.notifyGamePaused();
                 }
             }
         }
@@ -292,40 +272,17 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
                 mCanvasWidth = width;
                 mCanvasHeight = height;
 
-                //center_line = (float) mCanvasWidth / 2f;
                 setDefaultPositions();
                 updatePitchWallSizes(mCanvasWidth, mCanvasHeight);
             }
         }
 
         private void setDefaultPositions() {
-            /*float player1_x = (float) mCanvasWidth - PlayerEngine.PLAYER_RADIUS - 10f;
-            float player1_y = (float) mCanvasHeight / 2f;
-            player1Engine.setPitchSize(mCanvasWidth, mCanvasHeight);
-            player1Engine.updatePosition(player1_x, player1_y);
-            player1Engine.setPositionRestrictions(
-                    center_line + PlayerEngine.PLAYER_RADIUS,
-                    mCanvasWidth - BasePitchWall.BASE_WALL_THICKNESS - PlayerEngine.PLAYER_RADIUS,
-                    BasePitchWall.BASE_WALL_THICKNESS + PlayerEngine.PLAYER_RADIUS,
-                    mCanvasHeight - BasePitchWall.BASE_WALL_THICKNESS - PlayerEngine.PLAYER_RADIUS);
-            player1Engine.invalidateSpeedRatio();
-
-            float player2_x = PlayerEngine.PLAYER_RADIUS + 10f;
-            float player2_y = (float) mCanvasHeight / 2f;
-            player2Engine.setPitchSize(mCanvasWidth, mCanvasHeight);
-            player2Engine.updatePosition(player2_x, player2_y);
-            player2Engine.setPositionRestrictions(
-                    BasePitchWall.BASE_WALL_THICKNESS + PlayerEngine.PLAYER_RADIUS,
-                    center_line - PlayerEngine.PLAYER_RADIUS,
-                    BasePitchWall.BASE_WALL_THICKNESS + PlayerEngine.PLAYER_RADIUS,
-                    mCanvasHeight - BasePitchWall.BASE_WALL_THICKNESS - PlayerEngine.PLAYER_RADIUS);
-            player2Engine.invalidateSpeedRatio();
-*/
             duckEngine.setupDefaultPosition(mCanvasWidth, mCanvasHeight);
         }
 
         private void updatePitchWallSizes(int pitchWidth, int pitchHeight) {
-            /*for (int i = 0; i < pitchWalls.size(); i++) {
+            /*for (int i = 0; i < pitchWalls.size(); i++) {todo
                 pitchWalls.get(i).updateSize(pitchWidth, pitchHeight);
             }*/
             duckWall.updateSize(pitchWidth, pitchHeight);
@@ -344,12 +301,9 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
 
         boolean doTouchEvent(MotionEvent event) {
             boolean handled = true;
-            //synchronized (mSurfaceHolder) {
             if (mMode == STATE_RUNNING) {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_DOWN:
-                        doJump();
-                        break;
                     case MotionEvent.ACTION_POINTER_DOWN:
                         doJump();
                         break;
@@ -357,47 +311,12 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             } else {
                 handled = false;
             }
-            //}
             return handled;
-            //return false;
         }
 
         private void doJump() {
             duckEngine.updateVector(new Vector2(0f, -1f));
         }
-/*
-
-        private void multiMove(float x1, float y1, float x2, float y2) {
-            int t1 = x1 > center_line ? 1 : 0;
-            int t2 = x2 > center_line ? 1 : 0;
-
-            if (t1 + t2 == 1) {
-                if (t1 == 1) {
-                    setPlayer1Movement(x1, y1);
-                    setPlayer2Movement(x2, y2);
-                } else {
-                    setPlayer2Movement(x1, y1);
-                    setPlayer1Movement(x2, y2);
-                }
-            }
-        }
-
-        private void singleMove(float x, float y) {
-            if (x > center_line) {
-                setPlayer1Movement(x, y);
-            } else {
-                setPlayer2Movement(x, y);
-            }
-        }
-
-        private void setPlayer1Movement(float x, float y) {
-            player1Engine.updatePosition(x, y);
-        }
-
-        private void setPlayer2Movement(float x, float y) {
-            player2Engine.updatePosition(x, y);
-        }
-*/
 
         /**
          * Draws the ship, fuel/speed bars, and background to the provided
@@ -405,8 +324,6 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          */
         private void doDraw(Canvas canvas) {
             canvas.drawColor(Color.GREEN);
-            //canvas.drawCircle(player1Engine.getCurrentX(), player1Engine.getCurrentY(), PlayerEngine.PLAYER_RADIUS, PlayerEngine.PLAYER_PAINT);
-            //canvas.drawCircle(player2Engine.getCurrentX(), player2Engine.getCurrentY(), PlayerEngine.PLAYER_RADIUS, PlayerEngine.PLAYER_PAINT);
             if (duckEngine != null) {
                 //canvas.drawCircle(duckEngine.getCurrentX(), duckEngine.getCurrentY(), BallEngine.BALL_RADIUS, BallEngine.BALL_PAINT);
                 canvas.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()),
@@ -419,7 +336,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         }
 
         private void drawPitchWalls(Canvas canvas) {
-            /*for (int i = 0; i < pitchWalls.size(); i++) {
+            /*for (int i = 0; i < pitchWalls.size(); i++) {todo
                 canvas.drawRect(pitchWalls.get(i), pitchWalls.get(i).getCurrentPaint());
             }*/
             canvas.drawRect(duckWall, duckWall.getCurrentPaint());
@@ -443,13 +360,11 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             double ratio = elapsed / 0.015d;
             duckEngine.updatePosition(ratio);
             duckWall.updatePosition(ratio);
-            //ballEngine.considerFriction();
             if (duckEngine.checkForCollisions()) {
                 gameOver();
             }
 
             mLastTime = now;
-
         }
     }
 
@@ -463,7 +378,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
      */
     private FlappyDuckThread thread;
 
-    private ICymbergajRefree mRefree;
+    private IGameStateHolder mGameState;
 
     public FlappyDuckSurfaceView2(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -488,8 +403,8 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         return thread;
     }
 
-    public void setRefree(ICymbergajRefree refree) {
-        this.mRefree = refree;
+    public void setRefree(IGameStateHolder refree) {
+        this.mGameState = refree;
     }
 
     @Override

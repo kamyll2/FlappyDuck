@@ -25,18 +25,4 @@ public abstract class BasePitchWall extends RectF implements ICollisionInterpret
     public abstract void updateSize(int pitchWidth, int pitchHeight);
 
     protected abstract boolean isCollision(float x, float y);
-
-    protected void validateBallOutsideWall(ICollisionInvoker invoker){
-        float currX;
-        float currY;
-        float currSpeed = invoker.getCurrentSpeed();
-        invoker.setSpeedDirectly(1f);
-        do {
-            invoker.updatePosition(1d);
-            currX = invoker.getCurrentPositionX();
-            currY = invoker.getCurrentPositionY();
-        } while (isCollision(currX, currY));
-
-        invoker.setSpeedDirectly(currSpeed);
-    }
 }
