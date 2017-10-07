@@ -32,6 +32,8 @@ public class DuckWall implements ICollisionInterpreter {
     private RectF emptySpaceRect = new RectF();
     private EmptySpaceCollisionable emptySpaceCollisionable = new EmptySpaceCollisionable();
 
+    private WallPositionValidator positionValidator;
+
     public DuckWall() {
         currentPaint = new Paint();
         currentPaint.setColor(Color.CYAN);
@@ -42,6 +44,8 @@ public class DuckWall implements ICollisionInterpreter {
         this.pitchWidth = pitchWidth;
         this.pitchHeight = pitchHeight;
         defaultGoalSize = pitchHeight / 3f;
+        positionValidator.updateMinWallSpace(pitchWidth, pitchHeight);
+        getTopRect().right = pitchWidth / 2;
         generateNewPosition();
     }
 
@@ -59,7 +63,7 @@ public class DuckWall implements ICollisionInterpreter {
     }
 
     private void generateNewPosition() {
-        float newXPosition = generateNewXPosition(); //todo x restrictions
+        float newXPosition = generateNewXPosition();
         float newEmptySpaceY = generateNewEmptySpaceY();
         topRect.set(newXPosition,
                 0,
@@ -83,7 +87,7 @@ public class DuckWall implements ICollisionInterpreter {
 
     private float generateNewXPosition() {
         float random = (float) Math.random();
-        return pitchWidth * random + pitchWidth;
+        return (1.5f * BASE_WALL_THICKNESS) * random + positionValidator.getFarRight() + positionValidator.getMinWallSpace();
     }
 
     private void updateRect(RectF rect, float diffX, float diffY) {
@@ -131,8 +135,12 @@ public class DuckWall implements ICollisionInterpreter {
         return bottomRect;
     }
 
-    public void forceResetPosition(){
+    public void forceResetPosition() {
         generateNewPosition();
+    }
+
+    public void setPositionValidator(WallPositionValidator positionValidator) {
+        this.positionValidator = positionValidator;
     }
 
     private class EmptySpaceCollisionable implements ICollisionInterpreter {

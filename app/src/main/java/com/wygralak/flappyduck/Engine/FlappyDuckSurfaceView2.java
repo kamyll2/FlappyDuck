@@ -17,10 +17,14 @@ import com.wygralak.flappyduck.ColissionUtils.ICollisionInvoker;
 import com.wygralak.flappyduck.R;
 import com.wygralak.flappyduck.Vector2;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Kamil on 2016-10-02.
  */
 public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder.Callback {
+    private static final int WALL_COUNT = 5;
     private final Bitmap bitmap;
 
     public class FlappyDuckThread extends Thread implements ICollisionInterpreter {
@@ -76,8 +80,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         /**
          * Engine objects
          */
-        //private List<DuckWall> duckWalls;
-        private DuckWall duckWall;
+        private List<DuckWall> duckWalls;
         private DuckEngine duckEngine;
 
         /**
@@ -92,21 +95,20 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             duckEngine = new DuckEngine();
 
             duckEngine.addColissionable(this);
-            duckEngine.addColissionable(duckWall);
-            //ballEngine.addColissionables(duckWalls);todo
+            //duckEngine.addColissionable(duckWall);
+            duckEngine.addColissionables(duckWalls);
         }
 
         private void generateDuckWalls() {
-            /*pitchWalls = new ArrayList<>();todo
-            pitchWalls.add(new NorthLeftPitchWall());
-            pitchWalls.add(new NorthRightPitchWall());
-            pitchWalls.add(new SouthLeftPitchWall());
-            pitchWalls.add(new SouthRightPitchWall());
-            pitchWalls.add(new WestUpPitchWall());
-            pitchWalls.add(new WestDownPitchWall());
-            pitchWalls.add(new EastUpPitchWall());
-            pitchWalls.add(new EastDownPitchWall());*/
-            duckWall = new DuckWall();
+            duckWalls = new ArrayList<>(WALL_COUNT);
+            for (int i = 0; i < WALL_COUNT; i++) {
+                duckWalls.add(new DuckWall());
+            }
+            WallPositionValidator positionValidator = new WallPositionValidator();
+            positionValidator.addWalls(duckWalls);
+            for (DuckWall wall : duckWalls) {
+                wall.setPositionValidator(positionValidator);
+            }
         }
 
         public boolean isGameInStateReady() {
@@ -127,8 +129,10 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
                     y - DuckEngine.DUCK_RADIUS < 0) {
                 return true;
             } else {
-                if (duckWall.getEmptySpaceCollisionable().checkForCollision(invoker, currentVector, x, y)) {//todo
-                    mGameState.notifyPlayerBeatsWall();
+                for (DuckWall duckWall : duckWalls) {
+                    if (duckWall.getEmptySpaceCollisionable().checkForCollision(invoker, currentVector, x, y)) {
+                        mGameState.notifyPlayerBeatsWall();
+                    }
                 }
             }
             return false;
@@ -286,14 +290,15 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
 
         private void setDefaultPositions() {
             duckEngine.setupDefaultPosition(mCanvasWidth, mCanvasHeight);
-            duckWall.forceResetPosition();
+            for (DuckWall duckWall : duckWalls) {
+                duckWall.forceResetPosition();
+            }
         }
 
         private void updatePitchWallSizes(int pitchWidth, int pitchHeight) {
-            /*for (int i = 0; i < pitchWalls.size(); i++) {todo
-                pitchWalls.get(i).updateSize(pitchWidth, pitchHeight);
-            }*/
-            duckWall.updateSize(pitchWidth, pitchHeight);
+            for (DuckWall duckWall : duckWalls) {
+                duckWall.updateSize(pitchWidth, pitchHeight);
+            }
         }
 
         /**
@@ -344,11 +349,10 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         }
 
         private void drawPitchWalls(Canvas canvas) {
-            /*for (int i = 0; i < pitchWalls.size(); i++) {todo
-                canvas.drawRect(pitchWalls.get(i), pitchWalls.get(i).getCurrentPaint());
-            }*/
-            canvas.drawRect(duckWall.getTopRect(), duckWall.getCurrentPaint());
-            canvas.drawRect(duckWall.getBottomRect(), duckWall.getCurrentPaint());
+            for (DuckWall duckWall : duckWalls) {
+                canvas.drawRect(duckWall.getTopRect(), duckWall.getCurrentPaint());
+                canvas.drawRect(duckWall.getBottomRect(), duckWall.getCurrentPaint());
+            }
         }
 
         /**
@@ -368,7 +372,9 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
 
             double ratio = elapsed / 0.015d;
             duckEngine.updatePosition(ratio);
-            duckWall.updatePosition(ratio);
+            for (DuckWall duckWall : duckWalls) {
+                duckWall.updatePosition(ratio);
+            }
             if (duckEngine.checkForCollisions()) {
                 gameOver();
             }

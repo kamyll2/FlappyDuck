@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Kamil on 2016-03-10.
  */
 public class DuckEngine implements ICollisionInvoker {
-    public static final float DUCK_RADIUS = 20f;
+    public static final float DUCK_RADIUS = 30f;
     public static final float DEFAULT_SPEED = 6f;
     private static final float GRAVITY_STRANGTH = 0.05f;
 
@@ -33,7 +33,7 @@ public class DuckEngine implements ICollisionInvoker {
     public void setupDefaultPosition(float pitchWidth, float pitchHeight) {
         this.pitchWidth = pitchWidth;
         this.pitchHeight = pitchHeight;
-        currentX = pitchWidth / 2f;
+        currentX = pitchWidth / 4f;
         currentY = pitchHeight / 2f;
     }
 
@@ -49,7 +49,7 @@ public class DuckEngine implements ICollisionInvoker {
         collisionables.add(collisionInterpreter);
     }
 
-    public void addColissionables(List<ICollisionInterpreter> list) {
+    public void addColissionables(List<? extends ICollisionInterpreter> list) {
         collisionables.addAll(list);
     }
 
