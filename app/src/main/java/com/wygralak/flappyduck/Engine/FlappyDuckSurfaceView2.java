@@ -339,7 +339,8 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             /*for (int i = 0; i < pitchWalls.size(); i++) {todo
                 canvas.drawRect(pitchWalls.get(i), pitchWalls.get(i).getCurrentPaint());
             }*/
-            canvas.drawRect(duckWall, duckWall.getCurrentPaint());
+            canvas.drawRect(duckWall.getTopRect(), duckWall.getCurrentPaint());
+            canvas.drawRect(duckWall.getBottomRect(), duckWall.getCurrentPaint());
         }
 
         /**
