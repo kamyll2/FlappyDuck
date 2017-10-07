@@ -119,8 +119,8 @@ public class DuckWall implements ICollisionInterpreter {
     private boolean isRectInCollision(RectF rect, float x, float y) {
         return y - DuckEngine.DUCK_RADIUS < rect.bottom &&
                 x + DuckEngine.DUCK_RADIUS > rect.left &&
-                y - DuckEngine.DUCK_RADIUS > rect.top &&
-                x + DuckEngine.DUCK_RADIUS < rect.right;
+                y + DuckEngine.DUCK_RADIUS > rect.top &&
+                x - DuckEngine.DUCK_RADIUS < rect.right;
     }
 
     public ICollisionInterpreter getEmptySpaceCollisionable() {

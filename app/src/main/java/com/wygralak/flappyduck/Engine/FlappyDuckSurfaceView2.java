@@ -329,6 +329,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
 
         private void doJump() {
             duckEngine.updateVector(new Vector2(0f, -1f));
+            mGameState.notifyJump();
         }
 
         /**

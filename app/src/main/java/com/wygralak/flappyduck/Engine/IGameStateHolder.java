@@ -6,5 +6,6 @@ package com.wygralak.flappyduck.Engine;
 public interface IGameStateHolder {
     void notifyPlayerFailed();
     void notifyPlayerBeatsWall();
+    void notifyJump();
     void notifyGamePaused();
 }

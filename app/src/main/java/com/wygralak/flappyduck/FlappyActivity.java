@@ -1,5 +1,7 @@
 package com.wygralak.flappyduck;
 
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
@@ -14,6 +16,10 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
     RelativeLayout overlayView;
     TextView messageTextView;
     TextView countdownTextView;
+    private SoundPool soundPool;
+    private int deadSoundId;
+    private int[] quackSoundIds;
+    private AudioManager audioManager;
 
     FlappyDuckSurfaceView2 surfaceView;
     private FlappyDuckSurfaceView2.FlappyDuckThread gameThread;
@@ -25,6 +31,7 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flappy);
+        setupSoundPool();
 
         overlayView = (RelativeLayout) findViewById(R.id.overlay);
         messageTextView = (TextView) findViewById(R.id.text);
@@ -80,6 +87,29 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
         });
     }
 
+    private void setupSoundPool() {
+        // AudioManager audio settings for adjusting the volume
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        //actVolume = (float) audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        //maxVolume = (float) audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        //volume = actVolume / maxVolume;
+
+        this.setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        // Load the sounds
+        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                //loaded = true;
+            }
+        });
+        deadSoundId = soundPool.load(this, R.raw.dead, 1);
+        quackSoundIds = new int[2];
+        quackSoundIds[0] = soundPool.load(this, R.raw.quack1, 1);
+        quackSoundIds[1] = soundPool.load(this, R.raw.quack2, 1);
+    }
+
     private void updateTitleBar() {
         getSupportActionBar().setTitle("FlappyDuck\t\t\t Walls beaten: " + wallsBeaten);
     }
@@ -129,6 +159,7 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
                 showMessage("GAME OVER!\nYour result: " + wallsBeaten);
                 wallsBeaten = 0;
                 updateTitleBar();
+                soundPool.play(deadSoundId, 0.5f, 0.5f, 1, 0, 1f);
             }
         });
     }
@@ -166,5 +197,11 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void notifyJump() {
+        int rand = Math.random() >= 0.5d ? 0 : 1;
+        soundPool.play(quackSoundIds[rand], 0.5f, 0.5f, 1, 0, 1f);
     }
 }
