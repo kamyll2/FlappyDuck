@@ -19,6 +19,8 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
     private FlappyDuckSurfaceView2.FlappyDuckThread gameThread;
     private boolean countdownRunning;
 
+    private int wallsBeaten = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +81,7 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
     }
 
     private void updateTitleBar() {
-        //getSupportActionBar().setTitle("Player 2        " + player2Goals + ":" + player1Goals + "         Player 1");
+        getSupportActionBar().setTitle("FlappyDuck\t\t\t Walls beaten: " + wallsBeaten);
     }
 
     @Override
@@ -123,9 +125,21 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                updateTitleBar();
                 gameThread.setState(FlappyDuckSurfaceView2.FlappyDuckThread.STATE_READY);
-                showMessage("GAME OVER!");
+                showMessage("GAME OVER!\nYour result: " + wallsBeaten);
+                wallsBeaten = 0;
+                updateTitleBar();
+            }
+        });
+    }
+
+    @Override
+    public void notifyPlayerBeatsWall() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                wallsBeaten++;
+                updateTitleBar();
             }
         });
     }

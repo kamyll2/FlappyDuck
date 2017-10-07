@@ -119,7 +119,7 @@ public class DuckWall implements ICollisionInterpreter {
                 x + DuckEngine.DUCK_RADIUS < rect.right;
     }
 
-    public EmptySpaceCollisionable getEmptySpaceCollisionable() {
+    public ICollisionInterpreter getEmptySpaceCollisionable() {
         return emptySpaceCollisionable;
     }
 
@@ -129,6 +129,10 @@ public class DuckWall implements ICollisionInterpreter {
 
     public RectF getBottomRect() {
         return bottomRect;
+    }
+
+    public void forceResetPosition(){
+        generateNewPosition();
     }
 
     private class EmptySpaceCollisionable implements ICollisionInterpreter {

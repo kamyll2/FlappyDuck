@@ -123,8 +123,15 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
 
         @Override
         public boolean checkForCollision(ICollisionInvoker invoker, Vector2 currentVector, float x, float y) {
-            return y + DuckEngine.DUCK_RADIUS > mCanvasHeight ||
-                    y - DuckEngine.DUCK_RADIUS < 0;
+            if (y + DuckEngine.DUCK_RADIUS > mCanvasHeight ||
+                    y - DuckEngine.DUCK_RADIUS < 0) {
+                return true;
+            } else {
+                if (duckWall.getEmptySpaceCollisionable().checkForCollision(invoker, currentVector, x, y)) {//todo
+                    mGameState.notifyPlayerBeatsWall();
+                }
+            }
+            return false;
         }
 
         /**
@@ -279,6 +286,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
 
         private void setDefaultPositions() {
             duckEngine.setupDefaultPosition(mCanvasWidth, mCanvasHeight);
+            duckWall.forceResetPosition();
         }
 
         private void updatePitchWallSizes(int pitchWidth, int pitchHeight) {
