@@ -11,7 +11,8 @@ import android.widget.TextView;
 import com.wygralak.flappyduck.Engine.FlappyDuckSurfaceView2;
 import com.wygralak.flappyduck.Engine.IGameStateHolder;
 
-public class FlappyActivity extends ActionBarActivity implements IMessageViewer, IGameStateHolder {
+public class FlappyActivity extends ActionBarActivity
+        implements IMessageViewer, IGameStateHolder, View.OnClickListener {
 
     RelativeLayout overlayView;
     TextView messageTextView;
@@ -40,9 +41,13 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
         surfaceView.setRefree(this);
         gameThread = surfaceView.getThread();
 
-        overlayView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        overlayView.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.overlay:
                 if (gameThread.isGameInStateReady() && !countdownRunning) {
                     countdownRunning = true;
                     new Thread(new CountdownRunnable(new CountdownRunnable.ICountdownNotifier() {
@@ -83,8 +88,10 @@ public class FlappyActivity extends ActionBarActivity implements IMessageViewer,
                         }
                     })).start();
                 }
-            }
-        });
+                break;
+            default:
+                break;
+        }
     }
 
     private void setupSoundPool() {
