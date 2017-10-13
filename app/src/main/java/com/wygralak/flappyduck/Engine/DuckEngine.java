@@ -1,5 +1,7 @@
 package com.wygralak.flappyduck.Engine;
 
+import android.util.Log;
+
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInterpreter;
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInvoker;
 import com.wygralak.flappyduck.Vector2;
@@ -13,12 +15,14 @@ import java.util.List;
 public class DuckEngine implements ICollisionInvoker {
     public static final float DUCK_RADIUS = 30f;
     public static final float DEFAULT_SPEED = 6f;
-    private static final float GRAVITY_STRANGTH = 0.05f;
+    private static final float GRAVITY_STRENGTH = 0.05f;
+    private static final float ROTATION_ANGLE = 20;
 
     protected List<ICollisionInterpreter> collisionables;
 
     protected float currentX;
     protected float currentY;
+    protected float currentRotation;
     private float pitchWidth;
     private float pitchHeight;
     protected float speed = DEFAULT_SPEED;
@@ -28,6 +32,7 @@ public class DuckEngine implements ICollisionInvoker {
     public DuckEngine() {
         collisionables = new ArrayList<>();
         currentVector = new Vector2(0.0f, 0.1f).normalize();
+        currentRotation = 0;
     }
 
     public void setupDefaultPosition(float pitchWidth, float pitchHeight) {
@@ -43,6 +48,10 @@ public class DuckEngine implements ICollisionInvoker {
 
     public float getCurrentY() {
         return currentY;
+    }
+
+    public float getCurrentRotation() {
+        return currentRotation;
     }
 
     public void addColissionable(ICollisionInterpreter collisionInterpreter) {
@@ -64,9 +73,18 @@ public class DuckEngine implements ICollisionInvoker {
     @Override
     public void updatePosition(double ratio) {
         float speedWithRatio = speed * (float) ratio;
+
         currentX = currentX + speedWithRatio * currentVector.x;
+        Log.d("CURRENT_X", "" + currentX);
+        float lastY = currentY;
         currentY = currentY + speedWithRatio * currentVector.y;
-        currentVector.y += (ratio * GRAVITY_STRANGTH); //falling down
+        Log.d("CURRENT_Y", "" + currentY);
+        if (lastY > currentY) {
+            currentRotation = -ROTATION_ANGLE;
+        } else {
+            currentRotation = ROTATION_ANGLE;
+        }
+        currentVector.y += (ratio * GRAVITY_STRENGTH); //falling down
         currentVector.normalize();
     }
 

@@ -5,7 +5,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -338,15 +340,34 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          */
         private void doDraw(Canvas canvas) {
             canvas.drawColor(Color.GREEN);
-            if (duckEngine != null) {
-                //canvas.drawCircle(duckEngine.getCurrentX(), duckEngine.getCurrentY(), BallEngine.BALL_RADIUS, BallEngine.BALL_PAINT);
-                canvas.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()),
-                        new Rect((int) (duckEngine.getCurrentX() - DuckEngine.DUCK_RADIUS),
-                                (int) (duckEngine.getCurrentY() - DuckEngine.DUCK_RADIUS),
-                                (int) (duckEngine.getCurrentX() + DuckEngine.DUCK_RADIUS),
-                                (int) (duckEngine.getCurrentY() + DuckEngine.DUCK_RADIUS)), null);
-            }
+            drawDuck(canvas);
             drawPitchWalls(canvas);
+        }
+
+        private void drawDuck(Canvas canvas) {
+            if (duckEngine == null) {
+                return;
+            }
+
+            RectF srcRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            RectF dstRect = new RectF((int) (duckEngine.getCurrentX() - DuckEngine.DUCK_RADIUS),
+                    (int) (duckEngine.getCurrentY() - DuckEngine.DUCK_RADIUS),
+                    (int) (duckEngine.getCurrentX() + DuckEngine.DUCK_RADIUS),
+                    (int) (duckEngine.getCurrentY() + DuckEngine.DUCK_RADIUS));
+
+            Matrix enterTheMatrix = new Matrix();
+            enterTheMatrix.setRectToRect(srcRect,dstRect, Matrix.ScaleToFit.CENTER);
+            enterTheMatrix.preRotate(duckEngine.getCurrentRotation());
+
+
+            canvas.drawBitmap(bitmap, enterTheMatrix, null);
+
+            //canvas.drawCircle(duckEngine.getCurrentX(), duckEngine.getCurrentY(), BallEngine.BALL_RADIUS, BallEngine.BALL_PAINT);
+            /*canvas.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()),
+                    new Rect((int) (duckEngine.getCurrentX() - DuckEngine.DUCK_RADIUS),
+                            (int) (duckEngine.getCurrentY() - DuckEngine.DUCK_RADIUS),
+                            (int) (duckEngine.getCurrentX() + DuckEngine.DUCK_RADIUS),
+                            (int) (duckEngine.getCurrentY() + DuckEngine.DUCK_RADIUS)), null);*/
         }
 
         private void drawPitchWalls(Canvas canvas) {
