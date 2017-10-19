@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -42,6 +43,13 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         /*
          * Member (state) fields
          */
+
+        private static final String WALLS_BEATEN_LABEL = "Walls beaten: %s";
+
+        /**
+         * Shows how much player walls beats
+         */
+        public int beatenWallsCounter = 0;
 
         /**
          * Current height of the surface/canvas.
@@ -342,6 +350,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             canvas.drawColor(Color.GREEN);
             drawDuck(canvas);
             drawPitchWalls(canvas);
+            drawPointsCounter(canvas);
         }
 
         private void drawDuck(Canvas canvas) {
@@ -375,6 +384,19 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
                 canvas.drawRect(duckWall.getTopRect(), duckWall.getCurrentPaint());
                 canvas.drawRect(duckWall.getBottomRect(), duckWall.getCurrentPaint());
             }
+        }
+
+        /**
+         * Draws label that shows how much player points scored.
+         *
+         * @param canvas current instance of {@link Canvas} that is used to draw elements
+         */
+        private void drawPointsCounter(Canvas canvas) {
+            Paint paint = new Paint();
+            paint.setTextSize(50);
+            paint.setColor(Color.BLACK);
+
+            canvas.drawText(String.format(WALLS_BEATEN_LABEL, beatenWallsCounter), 20, 60, paint);
         }
 
         /**

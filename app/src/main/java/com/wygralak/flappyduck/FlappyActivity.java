@@ -118,7 +118,7 @@ public class FlappyActivity extends ActionBarActivity
     }
 
     private void updateTitleBar() {
-        getSupportActionBar().setTitle("FlappyDuck\t\t\t Walls beaten: " + wallsBeaten);
+        gameThread.beatenWallsCounter = wallsBeaten;
     }
 
     @Override
