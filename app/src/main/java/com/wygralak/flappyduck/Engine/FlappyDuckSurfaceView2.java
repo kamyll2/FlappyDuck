@@ -44,7 +44,10 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          * Member (state) fields
          */
 
+        private static final String HIGHSCORE_LABEL = "HighScore: %s";
         private static final String WALLS_BEATEN_LABEL = "Walls beaten: %s";
+
+        public int highScore = 0;
 
         /**
          * Shows how much player walls beats
@@ -351,6 +354,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             drawDuck(canvas);
             drawPitchWalls(canvas);
             drawPointsCounter(canvas);
+            drawHighscoreLabel(canvas);
         }
 
         private void drawDuck(Canvas canvas) {
@@ -395,8 +399,20 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             Paint paint = new Paint();
             paint.setTextSize(50);
             paint.setColor(Color.BLACK);
+            paint.setTextAlign(Paint.Align.RIGHT);
 
-            canvas.drawText(String.format(WALLS_BEATEN_LABEL, beatenWallsCounter), 20, 60, paint);
+            String textToDraw = String.format(WALLS_BEATEN_LABEL, beatenWallsCounter);
+            canvas.drawText(textToDraw, mCanvasWidth - 20, 60, paint);
+        }
+
+        private void drawHighscoreLabel(Canvas canvas) {
+            Paint paint = new Paint();
+            paint.setTextSize(50);
+            paint.setColor(Color.BLACK);
+            paint.setTextAlign(Paint.Align.LEFT);
+
+            String textToDraw = String.format(HIGHSCORE_LABEL, highScore);
+            canvas.drawText(textToDraw, 20, 60, paint);
         }
 
         /**

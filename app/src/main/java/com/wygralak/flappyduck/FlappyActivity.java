@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.wygralak.flappyduck.Engine.FlappyDuckSurfaceView2;
+import com.wygralak.flappyduck.Engine.GameHandler;
 import com.wygralak.flappyduck.Engine.IGameStateHolder;
 
 public class FlappyActivity extends ActionBarActivity
@@ -42,6 +43,8 @@ public class FlappyActivity extends ActionBarActivity
         gameThread = surfaceView.getThread();
 
         overlayView.setOnClickListener(this);
+
+        gameThread.highScore = GameHandler.loadHighScore(this);
     }
 
     @Override
@@ -119,6 +122,10 @@ public class FlappyActivity extends ActionBarActivity
 
     private void updateTitleBar() {
         gameThread.beatenWallsCounter = wallsBeaten;
+
+        if (wallsBeaten > gameThread.highScore) {
+            gameThread.highScore = wallsBeaten;
+        }
     }
 
     @Override
@@ -159,6 +166,8 @@ public class FlappyActivity extends ActionBarActivity
 
     @Override
     public void notifyPlayerFailed() {
+        GameHandler.saveGameStats(wallsBeaten, this);
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
