@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.util.AttributeSet;
@@ -354,7 +353,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             drawDuck(canvas);
             drawPitchWalls(canvas);
             drawPointsCounter(canvas);
-            drawHighscoreLabel(canvas);
+            drawHighScoreLabel(canvas);
         }
 
         private void drawDuck(Canvas canvas) {
@@ -369,18 +368,10 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
                     (int) (duckEngine.getCurrentY() + DuckEngine.DUCK_RADIUS));
 
             Matrix enterTheMatrix = new Matrix();
-            enterTheMatrix.setRectToRect(srcRect,dstRect, Matrix.ScaleToFit.CENTER);
+            enterTheMatrix.setRectToRect(srcRect, dstRect, Matrix.ScaleToFit.CENTER);
             enterTheMatrix.preRotate(duckEngine.getCurrentRotation());
 
-
             canvas.drawBitmap(bitmap, enterTheMatrix, null);
-
-            //canvas.drawCircle(duckEngine.getCurrentX(), duckEngine.getCurrentY(), BallEngine.BALL_RADIUS, BallEngine.BALL_PAINT);
-            /*canvas.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()),
-                    new Rect((int) (duckEngine.getCurrentX() - DuckEngine.DUCK_RADIUS),
-                            (int) (duckEngine.getCurrentY() - DuckEngine.DUCK_RADIUS),
-                            (int) (duckEngine.getCurrentX() + DuckEngine.DUCK_RADIUS),
-                            (int) (duckEngine.getCurrentY() + DuckEngine.DUCK_RADIUS)), null);*/
         }
 
         private void drawPitchWalls(Canvas canvas) {
@@ -405,7 +396,12 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             canvas.drawText(textToDraw, mCanvasWidth - 20, 60, paint);
         }
 
-        private void drawHighscoreLabel(Canvas canvas) {
+        /**
+         * Draws label that shows the highest score reached by player
+         *
+         * @param canvas current instance of {@link Canvas} that is used to draw elements
+         */
+        private void drawHighScoreLabel(Canvas canvas) {
             Paint paint = new Paint();
             paint.setTextSize(50);
             paint.setColor(Color.BLACK);
