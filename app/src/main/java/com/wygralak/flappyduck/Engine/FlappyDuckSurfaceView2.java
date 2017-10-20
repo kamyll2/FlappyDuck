@@ -547,9 +547,15 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
     public void surfaceCreated(SurfaceHolder holder) {
         // start the thread here so that we don't busy-wait in run()
         // waiting for the surface to be created
-        thread.setRunning(true);
-        thread.start();
 
+        if (thread.getState() != Thread.State.RUNNABLE && thread.getState() != Thread.State.TERMINATED) {
+            thread.setRunning(true);
+            thread.start();
+        } else if (thread.getState() == Thread.State.TERMINATED){
+            //FIXME: Temporary blocked app from crash. Bug occurred when player left app and try to come back
+            thread.setRunning(true);
+            thread.setState(GameState.READY);
+        }
     }
 
     /*
