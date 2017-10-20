@@ -118,7 +118,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         private void generateDuckWalls() {
             duckWalls = new ArrayList<>(WALL_COUNT);
             for (int i = 0; i < WALL_COUNT; i++) {
-                duckWalls.add(new DuckWall());
+                duckWalls.add(new DuckWall(getResources().getColor(R.color.wall)));
             }
             WallPositionValidator positionValidator = new WallPositionValidator();
             positionValidator.addWalls(duckWalls);
@@ -377,7 +377,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          * Canvas.
          */
         private void doDraw(Canvas canvas) {
-            canvas.drawColor(Color.GREEN);
+            canvas.drawColor(getResources().getColor(R.color.background));
             drawClouds(canvas);
             drawDuck(canvas);
             drawPitchWalls(canvas);

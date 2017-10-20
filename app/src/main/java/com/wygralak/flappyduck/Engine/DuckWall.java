@@ -35,8 +35,12 @@ public class DuckWall implements ICollisionInterpreter {
     private WallPositionValidator positionValidator;
 
     public DuckWall() {
+        this(Color.GREEN);
+    }
+
+    public DuckWall(int color) {
         currentPaint = new Paint();
-        currentPaint.setColor(Color.CYAN);
+        currentPaint.setColor(color);
         currentVector = new Vector2(-0.1f, 0.0f).normalize();
     }
 
