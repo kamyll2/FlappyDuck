@@ -1,4 +1,4 @@
-package com.wygralak.flappyduck.Engine;
+package com.wygralak.flappyduck.Engine.Environment;
 
 import android.graphics.RectF;
 
@@ -8,7 +8,7 @@ import com.wygralak.flappyduck.Vector2;
  * Created by robertogiba on 20.10.2017.
  */
 
-public class Cloud {
+public class Cloud implements ICloud {
     public static final float BASE_CLOUD_THICKNESS = 400f;
 
     public static final float DEFAULT_SPEED = 8f;
@@ -26,6 +26,7 @@ public class Cloud {
         currentVector = new Vector2(-0.1f, 0.0f).normalize();
     }
 
+    @Override
     public void updateSize(int pitchWidth, int pitchHeight) {
         this.pitchWidth = pitchWidth;
         this.pitchHeight = pitchHeight;
@@ -35,6 +36,7 @@ public class Cloud {
         generateNewPosition();
     }
 
+    @Override
     public void updatePosition(double ratio) {
         float speedWithRatio = speed * (float) ratio;
         float diffX = speedWithRatio * currentVector.x;
@@ -73,14 +75,17 @@ public class Cloud {
         rect.set(nextX, nextY, nextX + rect.width(), nextY + rect.height());
     }
 
+    @Override
     public RectF getTopRect() {
         return topRect;
     }
 
+    @Override
     public void setPositionValidator(CloudPositionValidator positionValidator) {
         this.positionValidator = positionValidator;
     }
 
+    @Override
     public void forceResetPosition() {
         generateNewPosition();
     }

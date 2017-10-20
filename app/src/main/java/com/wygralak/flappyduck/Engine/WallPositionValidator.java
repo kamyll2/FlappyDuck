@@ -11,21 +11,21 @@ import java.util.List;
  */
 
 public class WallPositionValidator {
-    private List<DuckWall> walls = new ArrayList<>();
+    private List<IDuckWall> walls = new ArrayList<>();
     private float minWallSpace = DuckWall.defaultGoalSize * 2;
 
-    private final Comparator<DuckWall> rightWallComparator = new RightWallComparator();
+    private final Comparator<IDuckWall> rightWallComparator = new RightWallComparator();
 
-    public void addWall(DuckWall wall) {
+    public void addWall(IDuckWall wall) {
         walls.add(wall);
     }
 
-    public void addWalls(Collection<DuckWall> walls) {
+    public void addWalls(Collection<IDuckWall> walls) {
         this.walls.addAll(walls);
     }
 
-    boolean isNewPositionValid(DuckWall wall) {
-        for (DuckWall myWall : walls) {
+    boolean isNewPositionValid(IDuckWall wall) {
+        for (IDuckWall myWall : walls) {
             if (wall != myWall) {
                 if (wall.getTopRect().intersect(myWall.getTopRect()) ||
                         wall.getTopRect().left - myWall.getTopRect().right < minWallSpace ||
@@ -49,9 +49,9 @@ public class WallPositionValidator {
         return Collections.max(walls, rightWallComparator).getTopRect().right;
     }
 
-    private class RightWallComparator implements Comparator<DuckWall> {
+    private class RightWallComparator implements Comparator<IDuckWall> {
         @Override
-        public int compare(DuckWall wall, DuckWall t1) {
+        public int compare(IDuckWall wall, IDuckWall t1) {
             return Float.compare(wall.getTopRect().right, t1.getTopRect().right);
         }
     }

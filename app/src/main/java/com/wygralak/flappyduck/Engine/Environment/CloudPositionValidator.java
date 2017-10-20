@@ -1,4 +1,4 @@
-package com.wygralak.flappyduck.Engine;
+package com.wygralak.flappyduck.Engine.Environment;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,16 +11,16 @@ import java.util.List;
  */
 
 public class CloudPositionValidator {
-    private List<Cloud> clouds = new ArrayList<>();
-    private float minCloudSpace = DuckWall.defaultGoalSize * 2;
+    private List<ICloud> clouds = new ArrayList<>();
+    private float minCloudSpace = Cloud.defaultGoalSize * 2;
 
-    private final Comparator<Cloud> rightCloudComparator = new RightCloudComparator();
+    private final Comparator<ICloud> rightCloudComparator = new RightCloudComparator();
 
-    public void addCloud(Cloud cloud) {
+    public void addCloud(ICloud cloud) {
         clouds.add(cloud);
     }
 
-    public void addClouds(Collection<Cloud> clouds) {
+    public void addClouds(Collection<ICloud> clouds) {
         this.clouds.addAll(clouds);
     }
 
@@ -36,9 +36,9 @@ public class CloudPositionValidator {
         return Collections.max(clouds, rightCloudComparator).getTopRect().right;
     }
 
-    private class RightCloudComparator implements Comparator<Cloud> {
+    private class RightCloudComparator implements Comparator<ICloud> {
         @Override
-        public int compare(Cloud cloud, Cloud t1) {
+        public int compare(ICloud cloud, ICloud t1) {
             return Float.compare(cloud.getTopRect().right, t1.getTopRect().right);
         }
     }

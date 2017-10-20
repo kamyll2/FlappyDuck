@@ -11,7 +11,7 @@ import com.wygralak.flappyduck.Vector2;
 /**
  * Created by Kamil on 2016-04-14.
  */
-public class DuckWall implements ICollisionInterpreter {
+public class DuckWall implements IDuckWall {
     public static final float BASE_WALL_THICKNESS = 180f;
     public static final float DEFAULT_SPEED_ABSORB = 0.8f;
     public static final float INCREASED_SPEED_ABSORB = 0.5f;
@@ -44,6 +44,7 @@ public class DuckWall implements ICollisionInterpreter {
         currentVector = new Vector2(-0.1f, 0.0f).normalize();
     }
 
+    @Override
     public void updateSize(int pitchWidth, int pitchHeight) {
         this.pitchWidth = pitchWidth;
         this.pitchHeight = pitchHeight;
@@ -53,6 +54,7 @@ public class DuckWall implements ICollisionInterpreter {
         generateNewPosition();
     }
 
+    @Override
     public void updatePosition(double ratio) {
         float speedWithRatio = speed * (float) ratio;
         float diffX = speedWithRatio * currentVector.x;
@@ -112,6 +114,7 @@ public class DuckWall implements ICollisionInterpreter {
         return isCollision(x, y);
     }
 
+    @Override
     public Paint getCurrentPaint() {
         return currentPaint;
     }
@@ -127,22 +130,27 @@ public class DuckWall implements ICollisionInterpreter {
                 x - DuckEngine.DUCK_RADIUS < rect.right;
     }
 
+    @Override
     public ICollisionInterpreter getEmptySpaceCollisionable() {
         return emptySpaceCollisionable;
     }
 
+    @Override
     public RectF getTopRect() {
         return topRect;
     }
 
+    @Override
     public RectF getBottomRect() {
         return bottomRect;
     }
 
+    @Override
     public void forceResetPosition() {
         generateNewPosition();
     }
 
+    @Override
     public void setPositionValidator(WallPositionValidator positionValidator) {
         this.positionValidator = positionValidator;
     }
