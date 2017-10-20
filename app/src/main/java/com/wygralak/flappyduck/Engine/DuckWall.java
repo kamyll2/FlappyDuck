@@ -6,27 +6,22 @@ import android.graphics.RectF;
 
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInterpreter;
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInvoker;
+import com.wygralak.flappyduck.Engine.Utils.BaseNode;
 import com.wygralak.flappyduck.Vector2;
 
 /**
  * Created by Kamil on 2016-04-14.
  */
-public class DuckWall implements IDuckWall {
+public class DuckWall extends BaseNode implements IDuckWall {
     public static final float BASE_WALL_THICKNESS = 180f;
     public static final float DEFAULT_SPEED_ABSORB = 0.8f;
     public static final float INCREASED_SPEED_ABSORB = 0.5f;
     public static final float DECREASED_SPEED_ABSORB = 1.4f;
 
-    protected Paint currentPaint;
     public static final float DEFAULT_SPEED = 6f;
-    protected float currentX;
-    protected float currentY;
     protected static float defaultGoalSize;
     protected float speed = DEFAULT_SPEED;
 
-    private Vector2 currentVector;
-    private int pitchWidth;
-    private int pitchHeight;
     private RectF topRect = new RectF();
     private RectF bottomRect = new RectF();
     private RectF emptySpaceRect = new RectF();

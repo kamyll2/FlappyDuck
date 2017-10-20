@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInterpreter;
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInvoker;
+import com.wygralak.flappyduck.Engine.Utils.BaseNode;
 import com.wygralak.flappyduck.Vector2;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
 /**
  * Created by Kamil on 2016-03-10.
  */
-public class DuckEngine implements ICollisionInvoker {
+public class DuckEngine extends BaseNode implements ICollisionInvoker {
     public static final float DUCK_RADIUS = 30f;
     public static final float DEFAULT_SPEED = 6f;
     private static final float GRAVITY_STRENGTH = 0.05f;
@@ -20,14 +21,8 @@ public class DuckEngine implements ICollisionInvoker {
 
     protected List<ICollisionInterpreter> collisionables;
 
-    protected float currentX;
-    protected float currentY;
-    protected float currentRotation;
-    private float pitchWidth;
-    private float pitchHeight;
-    protected float speed = DEFAULT_SPEED;
-
-    private Vector2 currentVector;
+    private float currentRotation;
+    private float speed = DEFAULT_SPEED;
 
     public DuckEngine() {
         collisionables = new ArrayList<>();
@@ -42,10 +37,12 @@ public class DuckEngine implements ICollisionInvoker {
         currentY = pitchHeight / 2f;
     }
 
+    @Override
     public float getCurrentX() {
         return currentX;
     }
 
+    @Override
     public float getCurrentY() {
         return currentY;
     }
@@ -120,7 +117,6 @@ public class DuckEngine implements ICollisionInvoker {
     @Override
     public void updateVector(Vector2 angle) {
         currentVector = angle;
-        //mainActivity.setStatusText(currentVector.toString());
     }
 
     @Override

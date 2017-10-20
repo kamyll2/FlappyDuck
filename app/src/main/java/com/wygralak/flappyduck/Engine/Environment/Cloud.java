@@ -2,22 +2,20 @@ package com.wygralak.flappyduck.Engine.Environment;
 
 import android.graphics.RectF;
 
+import com.wygralak.flappyduck.Engine.Utils.BaseNode;
 import com.wygralak.flappyduck.Vector2;
 
 /**
  * Created by robertogiba on 20.10.2017.
  */
 
-public class Cloud implements ICloud {
+public class Cloud extends BaseNode implements ICloud {
     public static final float BASE_CLOUD_THICKNESS = 400f;
 
     public static final float DEFAULT_SPEED = 8f;
     protected static float defaultGoalSize;
     protected float speed = DEFAULT_SPEED;
 
-    private Vector2 currentVector;
-    private int pitchWidth;
-    private int pitchHeight;
     private RectF topRect = new RectF();
 
     private CloudPositionValidator positionValidator;
