@@ -27,7 +27,9 @@ import java.util.List;
  */
 public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder.Callback {
     private static final int WALL_COUNT = 5;
+    private static final int CLOUDS_COUNT = 5;
     private final Bitmap bitmap;
+    private final Bitmap leftCloudBitmap;
 
     public class FlappyDuckThread extends Thread implements ICollisionInterpreter {
 
@@ -93,6 +95,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          * Engine objects
          */
         private List<DuckWall> duckWalls;
+        private List<Cloud> clouds;
         private DuckEngine duckEngine;
 
         /**
@@ -104,6 +107,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             mContext = context;
 
             generateDuckWalls();
+            generateClouds();
             duckEngine = new DuckEngine();
 
             duckEngine.addColissionable(this);
@@ -120,6 +124,18 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             positionValidator.addWalls(duckWalls);
             for (DuckWall wall : duckWalls) {
                 wall.setPositionValidator(positionValidator);
+            }
+        }
+
+        private void generateClouds() {
+            clouds = new ArrayList<>(CLOUDS_COUNT);
+            for (int i = 0; i < CLOUDS_COUNT; i++) {
+                clouds.add(new Cloud());
+            }
+            CloudPositionValidator cloudPositionValidator = new CloudPositionValidator();
+            cloudPositionValidator.addClouds(clouds);
+            for (Cloud cloud: clouds) {
+                cloud.setPositionValidator(cloudPositionValidator);
             }
         }
 
@@ -291,12 +307,14 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         /* Callback invoked when the surface dimensions change. */
         public void setSurfaceSize(int width, int height) {
             // synchronized to make sure these all change atomically
+            // synchronized to make sure these all change atomically
             synchronized (mSurfaceHolder) {
                 mCanvasWidth = width;
                 mCanvasHeight = height;
 
                 setDefaultPositions();
                 updatePitchWallSizes(mCanvasWidth, mCanvasHeight);
+                updateCloudSizes(mCanvasWidth, mCanvasHeight);
             }
         }
 
@@ -305,11 +323,21 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             for (DuckWall duckWall : duckWalls) {
                 duckWall.forceResetPosition();
             }
+
+            for (Cloud cloud :clouds) {
+                cloud.forceResetPosition();
+            }
         }
 
         private void updatePitchWallSizes(int pitchWidth, int pitchHeight) {
             for (DuckWall duckWall : duckWalls) {
                 duckWall.updateSize(pitchWidth, pitchHeight);
+            }
+        }
+
+        private void updateCloudSizes(int pitchWidth, int pitchHeight) {
+            for (Cloud cloud: clouds) {
+                cloud.updateSize(pitchWidth, pitchHeight);
             }
         }
 
@@ -350,10 +378,22 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          */
         private void doDraw(Canvas canvas) {
             canvas.drawColor(Color.GREEN);
+            drawClouds(canvas);
             drawDuck(canvas);
             drawPitchWalls(canvas);
             drawPointsCounter(canvas);
             drawHighScoreLabel(canvas);
+        }
+
+        private void drawClouds(Canvas canvas) {
+            RectF srcRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+            for (Cloud cloud : clouds) {
+                Matrix matrix = new Matrix();
+                matrix.setRectToRect(srcRect, cloud.getTopRect(), Matrix.ScaleToFit.FILL);
+
+                canvas.drawBitmap(leftCloudBitmap, matrix, null);
+            }
         }
 
         private void drawDuck(Canvas canvas) {
@@ -431,6 +471,11 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             for (DuckWall duckWall : duckWalls) {
                 duckWall.updatePosition(ratio);
             }
+
+            for (Cloud cloud: clouds) {
+                cloud.updatePosition(ratio);
+            }
+
             if (duckEngine.checkForCollisions()) {
                 gameOver();
             }
@@ -463,6 +508,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
 
         setFocusable(true); // make sure we get key events
         bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.duck);
+        leftCloudBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.left_cloud);
     }
 
     /**
