@@ -19,6 +19,7 @@ import com.wygralak.flappyduck.ColissionUtils.ICollisionInvoker;
 import com.wygralak.flappyduck.Engine.Environment.Cloud;
 import com.wygralak.flappyduck.Engine.Environment.CloudPositionValidator;
 import com.wygralak.flappyduck.Engine.Environment.ICloud;
+import com.wygralak.flappyduck.Engine.Utils.GameState;
 import com.wygralak.flappyduck.R;
 import com.wygralak.flappyduck.Vector2;
 
@@ -35,15 +36,6 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
     private final Bitmap leftCloudBitmap;
 
     public class FlappyDuckThread extends Thread implements ICollisionInterpreter {
-
-        /*
-         * State-tracking constants
-         */
-        public static final int STATE_PAUSE = 2;
-        public static final int STATE_READY = 3;
-        public static final int STATE_RUNNING = 4;
-        public static final int STATE_PLAYER_FAILED = 5;
-
         /*
          * Member (state) fields
          */
@@ -78,9 +70,9 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         private long mLastTime;
 
         /**
-         * The state of the game. One of READY, RUNNING, PAUSE, LOSE, or WIN
+         * The state of the game. One of {@link GameState}: READY, RUNNING, PAUSE and PLAYER_FAILED
          */
-        private int mMode;
+        private GameState mMode;
 
         /**
          * Indicate whether the surface has been created & is ready to draw
@@ -143,15 +135,15 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         }
 
         public boolean isGameInStateReady() {
-            return mMode == STATE_READY;
+            return mMode == GameState.READY;
         }
 
         public boolean isGameInStateRunning() {
-            return mMode == STATE_RUNNING;
+            return mMode == GameState.RUNNING;
         }
 
         public boolean isGameInStatePaused() {
-            return mMode == STATE_PAUSE;
+            return mMode == GameState.PAUSE;
         }
 
         @Override
@@ -177,7 +169,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
                 //TODO inicjalizacja pozycji
 
                 mLastTime = System.currentTimeMillis() + 100;
-                setState(STATE_RUNNING);
+                setState(GameState.RUNNING);
             }
         }
 
@@ -186,8 +178,8 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          */
         public void pause() {
             synchronized (mSurfaceHolder) {
-                if (mMode == STATE_RUNNING) {
-                    setState(STATE_PAUSE);
+                if (mMode == GameState.RUNNING) {
+                    setState(GameState.PAUSE);
                 }
             }
         }
@@ -201,13 +193,13 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          */
         public synchronized void restoreState(Bundle savedState) {
             synchronized (mSurfaceHolder) {
-                setState(STATE_PAUSE);
+                setState(GameState.PAUSE);
                 //TODO restore state
             }
         }
 
         private void gameOver() {
-            setState(STATE_PLAYER_FAILED);
+            setState(GameState.PLAYER_FAILED);
             setDefaultPositions();
             duckEngine.setDefaultSpeed();
             mGameState.notifyPlayerFailed();
@@ -220,7 +212,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
                 try {
                     c = mSurfaceHolder.lockCanvas(null);
                     synchronized (mSurfaceHolder) {
-                        if (mMode == STATE_RUNNING) updatePhysics();
+                        if (mMode == GameState.RUNNING) updatePhysics();
                         // Critical section. Do not allow mRun to be set false until
                         // we are sure all canvas draw operations are complete.
                         //
@@ -274,9 +266,9 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          * failure state, in the victory state, etc.
          *
          * @param mode one of the STATE_* constants
-         * @see #setState(int, CharSequence)
+         * @see #setState(GameState, CharSequence)
          */
-        public void setState(int mode) {
+        public void setState(GameState mode) {
             synchronized (mSurfaceHolder) {
                 setState(mode, null);
             }
@@ -289,7 +281,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
          * @param mode    one of the STATE_* constants
          * @param message string to add to screen or null
          */
-        public void setState(int mode, CharSequence message) {
+        public void setState(GameState mode, CharSequence message) {
             /*
              * This method optionally can cause a text message to be displayed
              * to the user when the mode changes. Since the View that actually
@@ -301,7 +293,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             synchronized (mSurfaceHolder) {
                 mMode = mode;
 
-                if (mMode == STATE_PAUSE) {
+                if (mMode == GameState.PAUSE) {
                     mGameState.notifyGamePaused();
                 }
             }
@@ -352,12 +344,12 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
             synchronized (mSurfaceHolder) {
                 mLastTime = System.currentTimeMillis() + 100;
             }
-            setState(STATE_RUNNING);
+            setState(GameState.RUNNING);
         }
 
         boolean doTouchEvent(MotionEvent event) {
             boolean handled = true;
-            if (mMode == STATE_RUNNING) {
+            if (mMode == GameState.RUNNING) {
                 switch (event.getAction() & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_DOWN:
                     case MotionEvent.ACTION_POINTER_DOWN:
@@ -545,7 +537,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
     /* Callback invoked when the surface dimensions change. */
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         thread.setSurfaceSize(width, height);
-        thread.setState(FlappyDuckThread.STATE_READY);
+        thread.setState(GameState.READY);
     }
 
     /*

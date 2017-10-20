@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.wygralak.flappyduck.Engine.FlappyDuckSurfaceView2;
 import com.wygralak.flappyduck.Engine.GameHandler;
 import com.wygralak.flappyduck.Engine.IGameStateHolder;
+import com.wygralak.flappyduck.Engine.Utils.GameState;
 
 public class FlappyActivity extends ActionBarActivity
         implements IMessageViewer, IGameStateHolder, View.OnClickListener {
@@ -171,7 +172,7 @@ public class FlappyActivity extends ActionBarActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                gameThread.setState(FlappyDuckSurfaceView2.FlappyDuckThread.STATE_READY);
+                gameThread.setState(GameState.READY);
                 showMessage("GAME OVER!\nYour result: " + wallsBeaten);
                 wallsBeaten = 0;
                 updateTitleBar();
