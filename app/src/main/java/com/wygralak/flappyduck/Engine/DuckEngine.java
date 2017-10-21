@@ -76,10 +76,10 @@ public class DuckEngine extends BaseNode implements ICollisionInvoker {
         float lastY = currentY;
         currentY = currentY + speedWithRatio * currentVector.y;
         Log.d("CURRENT_Y", "" + currentY);
-        if (lastY > currentY) {
-            currentRotation = -ROTATION_ANGLE;
-        } else {
-            currentRotation = ROTATION_ANGLE;
+        if (lastY > currentY && currentRotation > -ROTATION_ANGLE) {
+            currentRotation -= 2;
+        } else if (currentRotation < ROTATION_ANGLE) {
+            currentRotation += 2;
         }
         currentVector.y += (ratio * GRAVITY_STRENGTH); //falling down
         currentVector.normalize();
