@@ -10,7 +10,7 @@ import com.wygralak.flappyduck.Vector2;
  */
 
 public class Cloud extends BaseNode implements ICloud {
-    public static final float BASE_CLOUD_THICKNESS = 400f;
+    public static final float BASE_CLOUD_THICKNESS = 300f;
 
     public static final float DEFAULT_SPEED = 8f;
     protected static float defaultGoalSize;

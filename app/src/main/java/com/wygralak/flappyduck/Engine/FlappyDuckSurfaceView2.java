@@ -381,7 +381,7 @@ public class FlappyDuckSurfaceView2 extends SurfaceView implements SurfaceHolder
         }
 
         private void drawClouds(Canvas canvas) {
-            RectF srcRect = new RectF(0, 0, bitmap.getWidth(), bitmap.getHeight());
+            RectF srcRect = new RectF(0, 0, leftCloudBitmap.getWidth(), leftCloudBitmap.getHeight());
 
             for (ICloud cloud : clouds) {
                 Matrix matrix = new Matrix();

@@ -7,12 +7,13 @@ import android.graphics.RectF;
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInterpreter;
 import com.wygralak.flappyduck.ColissionUtils.ICollisionInvoker;
 import com.wygralak.flappyduck.Engine.Utils.BaseNode;
+import com.wygralak.flappyduck.Engine.Utils.PaintNode;
 import com.wygralak.flappyduck.Vector2;
 
 /**
  * Created by Kamil on 2016-04-14.
  */
-public class DuckWall extends BaseNode implements IDuckWall {
+public class DuckWall extends PaintNode implements IDuckWall {
     public static final float BASE_WALL_THICKNESS = 180f;
     public static final float DEFAULT_SPEED_ABSORB = 0.8f;
     public static final float INCREASED_SPEED_ABSORB = 0.5f;
@@ -34,8 +35,7 @@ public class DuckWall extends BaseNode implements IDuckWall {
     }
 
     public DuckWall(int color) {
-        currentPaint = new Paint();
-        currentPaint.setColor(color);
+        super(color);
         currentVector = new Vector2(-0.1f, 0.0f).normalize();
     }
 

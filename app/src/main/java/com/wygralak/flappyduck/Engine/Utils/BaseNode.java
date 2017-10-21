@@ -16,7 +16,6 @@ public abstract class BaseNode {
     protected float pitchHeight;
 
     protected Vector2 currentVector;
-    protected Paint currentPaint;
 
     public float getCurrentX() {
         return currentX;
@@ -56,13 +55,5 @@ public abstract class BaseNode {
 
     public void setCurrentVector(Vector2 currentVector) {
         this.currentVector = currentVector;
-    }
-
-    public Paint getCurrentPaint() {
-        return currentPaint;
-    }
-
-    public void setCurrentPaint(Paint currentPaint) {
-        this.currentPaint = currentPaint;
     }
 }
